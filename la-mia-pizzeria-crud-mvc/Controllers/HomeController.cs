@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+﻿using la_mia_pizzeria_crud_mvc.Models;
+using Microsoft.AspNetCore.Mvc;
+
 
 namespace la_mia_pizzeria_crud_mvc.Controllers
 {
@@ -16,6 +17,6 @@ namespace la_mia_pizzeria_crud_mvc.Controllers
         public IActionResult Index()
         {
             return View();
-        }      
+        }
     }
 }
