@@ -1,0 +1,55 @@
+﻿@model Pizza
+@if (Model == null)
+{
+    <h1>Pizza not found</h1>
+}else
+{
+<div class="container">
+    <div class="card">
+
+
+            @if (User.IsInRole("Admin"))
+            {
+                <a href="@Url.Action("Update", "Pizza", new { id = Model.Id })">Modifica</a>
+                <form asp-controller="Pizza" asp-action="Delete" asp-route-id="@Model.Id" method="post">
+                    <button type="submit">Elimina</button>
+                </form>
+            }
+
+
+        <img class="w-48" src="@Model.Image" alt="@Model.Name">
+        <div class="card-body">
+            <h5 class="card-title">@Model.Name</h5>
+            <p class="card-text">@Model.Description</p>
+            <h6>$ @Model.Price</h6>
+            <p>
+                @if (Model.CategoryId != null)
+                {
+                    <strong>Categories:</strong>
+                    <span>@Model.Category.Name</span>
+                }
+                else
+                {
+                    <span>No categories selected</span>
+                }
+            </p>
+            <p>
+                <strong>Ingredients:</strong>
+                @if (Model.Ingredients != null && Model.Ingredients.Any())
+                {
+                    <ul>
+                        @foreach (var ingredient in Model.Ingredients)
+                        {
+                            <li>@ingredient.Name</li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <span>No ingredients selected</span>
+                }
+            </p>
+        </div>
+    </div>
+</div>
+}

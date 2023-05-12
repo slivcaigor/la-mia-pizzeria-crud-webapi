@@ -1,0 +1,80 @@
+﻿@{
+    ViewData["Title"] = "Menu Page";
+    @model List<Pizza>
+
+    <!-- Pagination controls -->
+    int currentPage = ViewBag.CurrentPage != null ? (int)ViewBag.CurrentPage : 1;
+    int totalPizzas = (int)ViewData["TotalPizzas"];
+    int pageSize = ViewBag.PageSize;
+    int totalPages = (int)Math.Ceiling((double)totalPizzas / pageSize);
+}
+
+
+
+@if (ViewBag.Message != null)
+{
+    <h1 class="text-center">@ViewBag.Message</h1>
+}
+else
+{
+
+    <!-- component -->
+    <div class="h-screen bg-black flex items-center justify-center">
+
+
+        @if (User.IsInRole("Admin"))
+        {
+            <a href="@Url.Action("Create", "Pizza")" class="btn btn-danger py-1 px-2 mt-2 fs-5 mb-3">Create Pizza</a>
+        }
+
+
+        <div class="grid grid-cols-6 gap-2 px-16">
+            @foreach (var card in Model)
+            {
+                <!-- Item 1 -->
+                <div class="flex flex-col gap-1">
+
+                    <!-- Image -->
+                    <a href="@Url.Action("Details", "Pizza", new{id=@card.Id})" class="bg-purple-500">
+                        <img src="@card.Image?? '404.png'" alt="@card.Name" class="hover:translate-x-1 hover:-translate-y-1 delay-50 duration-100" />
+                    </a>
+
+                    <!-- Games Title -->
+                    <a href="#" class="hover:text-purple-500 text-gray-200 font-semibold">
+                        @card.Name
+                        <span class="badge badge-secondary">$ @card.Price</span>
+                    </a>
+
+                    <!-- Viewers -->
+                    <a href="#" class="hover:text-purple-500 text-sm text-gray-400 -mt-1">@card.Description</a>
+
+                    <!-- Category Tags -->
+                    <div class="flex flex-row flex-wrap gap-2">
+                        @if (card.Category != null)
+                        {
+                            <div class="hover:bg-gray-600 text-gray-300 text-xs font-semibold bg-gray-700 px-2 py-1 rounded-full">@card.Category.Name</div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div>
+            @if (currentPage > 1)
+            {
+                <a href="/Pizza/Index?pageNumber=@(currentPage - 1)">Previous</a>
+            }
+
+            @for (int i = 1; i <= totalPages; i++)
+            {
+                <a href="/Pizza/Index?pageNumber=@i" @(i == currentPage ? "class=current" : "")>@i</a>
+            }
+
+            @if (currentPage < totalPages)
+            {
+                <a href="/Pizza/Index?pageNumber=@(currentPage + 1)">Next</a>
+            }
+        </div>
+    </div>
+}
+

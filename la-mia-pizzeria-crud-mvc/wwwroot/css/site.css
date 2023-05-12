@@ -1,0 +1,30 @@
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+}
+
+.current {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.banner, .header-banner {
+    background-image: url(/img/15656.jpg);
+    background-repeat: no-repeat;
+    background-position: 50%;
+    background-size: cover;
+}
