@@ -16,49 +16,30 @@
 }
 else
 {
-
-    <!-- component -->
-    <div class="h-screen bg-black flex items-center justify-center">
-
-
-        @if (User.IsInRole("Admin"))
-        {
-            <a href="@Url.Action("Create", "Pizza")" class="btn btn-danger py-1 px-2 mt-2 fs-5 mb-3">Create Pizza</a>
-        }
-
-
-        <div class="grid grid-cols-6 gap-2 px-16">
+    <section class="my-12 max-w-screen-xl mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mt-12">
             @foreach (var card in Model)
             {
-                <!-- Item 1 -->
-                <div class="flex flex-col gap-1">
-
-                    <!-- Image -->
-                    <a href="@Url.Action("Details", "Pizza", new{id=@card.Id})" class="bg-purple-500">
-                        <img src="@card.Image?? '404.png'" alt="@card.Name" class="hover:translate-x-1 hover:-translate-y-1 delay-50 duration-100" />
-                    </a>
-
-                    <!-- Games Title -->
-                    <a href="#" class="hover:text-purple-500 text-gray-200 font-semibold">
-                        @card.Name
-                        <span class="badge badge-secondary">$ @card.Price</span>
-                    </a>
-
-                    <!-- Viewers -->
-                    <a href="#" class="hover:text-purple-500 text-sm text-gray-400 -mt-1">@card.Description</a>
-
-                    <!-- Category Tags -->
-                    <div class="flex flex-row flex-wrap gap-2">
-                        @if (card.Category != null)
-                        {
-                            <div class="hover:bg-gray-600 text-gray-300 text-xs font-semibold bg-gray-700 px-2 py-1 rounded-full">@card.Category.Name</div>
-                        }
+                <a href="@Url.Action("Details", "Pizza", new{id=@card.Id})">
+                    <div class="bg-white border border-gray-100 transition transform duration-700 hover:shadow-xl hover:scale-105 p-4 rounded-lg relative">
+                        <span class="bg-orange-400 rounded-full text-white text-sm poppins px-4 py-1 inline-block mb-4 ">
+                            @if (card.Category != null)
+                            {
+                                @card.Category.Name
+                            }
+                        </span>
+                        <img class="w-full rounded-full mx-auto transform transition duration-300 hover:scale-105" src="@card.Image?? '404.png'" alt="@card.Name">
+                        <div class="flex flex-col items-center my-3 space-y-2">
+                            <h1 class="text-gray-900 poppins text-lg">@card.Name</h1>
+                            <p class="text-gray-500 poppins text-sm text-center">@card.Description</p>
+                            <h2 class="text-gray-900 poppins text-2xl font-bold">$@card.Price</h2>
+                            <span class="bg-primary text-white px-8 py-2 focus:outline-none poppins rounded-full mt-24 transform transition duration-300 hover:scale-105">Order Now</span>
+                        </div>
                     </div>
-                </div>
+                </a>
             }
         </div>
-
-        <div>
+        <div class="flex gap-2 justify-center mt-10 text-lg">
             @if (currentPage > 1)
             {
                 <a href="/Pizza/Index?pageNumber=@(currentPage - 1)">Previous</a>
@@ -74,5 +55,5 @@ else
                 <a href="/Pizza/Index?pageNumber=@(currentPage + 1)">Next</a>
             }
         </div>
-    </div>
+    </section>
 }

@@ -36,20 +36,19 @@ namespace la_mia_pizzeria_crud_mvc.Controllers
         [HttpGet]
         public IActionResult Details(int id)
         {
-            using (PizzaContext db = new())
-            {
-                Pizza? pizza = db.Pizza
-                    .Where(pizza => pizza.Id == id)
-                    .Include(pizza => pizza.Category)
-                    .Include(pizza => pizza.Ingredients)
-                    .FirstOrDefault();
+            using PizzaContext db = new();
+            Pizza? pizza = db.Pizza
+                .Where(pizza => pizza.Id == id)
+                .Include(pizza => pizza.Category)
+                .Include(pizza => pizza.Ingredients)
+                .FirstOrDefault();
 
-                if (pizza != null)
-                {
-                    return View("Details", pizza);
-                }
-                return RedirectToAction("Error404");
+            if (pizza != null)
+            {
+                return View("Details", pizza);
             }
+                return RedirectToAction("Error404");
+            
         }
 
 
@@ -85,11 +84,11 @@ namespace la_mia_pizzeria_crud_mvc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                using PizzaContext db = new();
-                List<Category> categories = db.Categories.ToList();
+                using PizzaContext context = new();
+                List<Category> categories = context.Categories.ToList();
                 data.Categories = categories;
 
-                List<Ingredient> ingredients = db.Ingredients.ToList();
+                List<Ingredient> ingredients = context.Ingredients.ToList();
                 List<SelectListItem> listIngredients = new();
 
                 foreach (Ingredient ingredient in ingredients)
@@ -103,38 +102,36 @@ namespace la_mia_pizzeria_crud_mvc.Controllers
                 return View(data);
             }
 
-            using (PizzaContext db = new())
+            using PizzaContext db = new();
+            Pizza? pizza = new()
             {
-                Pizza? pizza = new()
-                {
-                    Name = data.Pizza.Name,
-                    Description = data.Pizza.Description,
-                    Price = data.Pizza.Price,
-                    Image = data.Pizza.Image,
-                    CategoryId = data.Pizza.CategoryId,
-                    Ingredients = new List<Ingredient>()
-                };
+                Name = data.Pizza.Name,
+                Description = data.Pizza.Description,
+                Price = data.Pizza.Price,
+                Image = data.Pizza.Image,
+                CategoryId = data.Pizza.CategoryId,
+                Ingredients = new List<Ingredient>()
+            };
 
-                if (data.SelectedIngredients != null)
+            if (data.SelectedIngredients != null)
+            {
+                foreach (string? selectedIngredientId in data.SelectedIngredients)
                 {
-                    foreach (string? selectedIngredientId in data.SelectedIngredients)
+                    if (selectedIngredientId != null && int.TryParse(selectedIngredientId, out int ingredientId))
                     {
-                        if (selectedIngredientId != null && int.TryParse(selectedIngredientId, out int ingredientId))
+                        Ingredient? ingredient = db.Ingredients.FirstOrDefault(ing => ing.Id == ingredientId);
+                        if (ingredient != null)
                         {
-                            Ingredient? ingredient = db.Ingredients.FirstOrDefault(ing => ing.Id == ingredientId);
-                            if (ingredient != null)
-                            {
-                                pizza.Ingredients.Add(ingredient);
-                            }
+                            pizza.Ingredients.Add(ingredient);
                         }
                     }
                 }
-
-                db.Pizza.Add(pizza);
-                db.SaveChanges();
-
-                return RedirectToAction("Index");
             }
+
+            db.Pizza.Add(pizza);
+            db.SaveChanges();
+
+            return RedirectToAction("Index");
         }
 
 
@@ -186,66 +183,61 @@ namespace la_mia_pizzeria_crud_mvc.Controllers
         {
             if (!ModelState.IsValid)
             {
-                using (PizzaContext db = new())
+                using PizzaContext context = new();
+                List<Category> categories = context.Categories.ToList();
+                List<Ingredient> ingredients = context.Ingredients.ToList();
+                List<SelectListItem> listIngredients = new();
+
+                foreach (Ingredient ingredient in ingredients)
                 {
-                    List<Category> categories = db.Categories.ToList();
-                    List<Ingredient> ingredients = db.Ingredients.ToList();
-                    List<SelectListItem> listIngredients = new();
-
-                    foreach (Ingredient ingredient in ingredients)
+                    listIngredients.Add(new SelectListItem()
                     {
-                        listIngredients.Add(new SelectListItem()
-                        {
-                            Text = ingredient.Name,
-                            Value = ingredient.Id.ToString(),
-                            Selected = data.SelectedIngredients?.Contains(ingredient.Id.ToString()) ?? false
-                        });
-                    }
-
-                    data.Categories = categories;
-                    data.Ingredient = listIngredients;
-
-                    return View("Update", data);
+                        Text = ingredient.Name,
+                        Value = ingredient.Id.ToString(),
+                        Selected = data.SelectedIngredients?.Contains(ingredient.Id.ToString()) ?? false
+                    });
                 }
+
+                data.Categories = categories;
+                data.Ingredient = listIngredients;
+
+                return View("Update", data);
             }
 
-            using (PizzaContext db = new())
+            using PizzaContext db = new();
+            Pizza? pizza = db.Pizza
+                .Where(p => p.Id == id)
+                .Include(p => p.Ingredients)
+                .FirstOrDefault();
+
+            if (pizza != null)
             {
-                Pizza? pizza = db.Pizza
-                    .Where(p => p.Id == id)
-                    .Include(p => p.Ingredients)
-                    .FirstOrDefault();
+                pizza.Name = data.Pizza.Name;
+                pizza.Description = data.Pizza.Description;
+                pizza.Price = data.Pizza.Price;
+                pizza.CategoryId = data.Pizza.CategoryId;
+                pizza.Ingredients?.Clear();
 
-                if (pizza != null)
+                if (data.SelectedIngredients != null)
                 {
-                    pizza.Name = data.Pizza.Name;
-                    pizza.Description = data.Pizza.Description;
-                    pizza.Price = data.Pizza.Price;
-                    pizza.CategoryId = data.Pizza.CategoryId;
-                    pizza.Ingredients?.Clear();
-
-                    if (data.SelectedIngredients != null)
+                    foreach (string? selectedIngredientId in data.SelectedIngredients)
                     {
-                        foreach (string? selectedIngredientId in data.SelectedIngredients)
+                        if (selectedIngredientId is not null && int.TryParse(selectedIngredientId, out int ingredientId))
                         {
-                            if (selectedIngredientId is not null && int.TryParse(selectedIngredientId, out int ingredientId))
+                            Ingredient? ingredient = db.Ingredients.FirstOrDefault(ing => ing.Id == ingredientId);
+                            if (ingredient is not null)
                             {
-                                Ingredient? ingredient = db.Ingredients.FirstOrDefault(ing => ing.Id == ingredientId);
-                                if (ingredient is not null)
-                                {
-                                    pizza.Ingredients?.Add(ingredient);
-                                }
+                                pizza.Ingredients?.Add(ingredient);
                             }
                         }
                     }
-
-                    db.SaveChanges();
-                    return RedirectToAction("Index");
                 }
-                else
-                {
-                    return RedirectToAction("Error404");
-                }
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return RedirectToAction("Error404");
             }
         }
 
@@ -254,22 +246,20 @@ namespace la_mia_pizzeria_crud_mvc.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Delete(int id)
         {
-            using (PizzaContext db = new())
+            using PizzaContext db = new();
+            Pizza? pizza = db.Pizza.Where(pizza => pizza.Id == id).FirstOrDefault();
+
+            if (pizza != null)
             {
-                Pizza? pizza = db.Pizza.Where(pizza => pizza.Id == id).FirstOrDefault();
+                db.Pizza.Remove(pizza);
 
-                if (pizza != null)
-                {
-                    db.Pizza.Remove(pizza);
+                db.SaveChanges();
 
-                    db.SaveChanges();
-
-                    return RedirectToAction("Index");
-                }
-                else
-                {
-                    return RedirectToAction("Error404");
-                }
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return RedirectToAction("Error404");
             }
         }
     }
