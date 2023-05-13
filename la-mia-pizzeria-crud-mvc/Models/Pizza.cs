@@ -24,6 +24,7 @@ namespace la_mia_pizzeria_crud_mvc.Models
 
         [Required(ErrorMessage = "Il link all'immagine è obbligatorio")]
         [Column("image")]
+        [Url]
         public string? Image { get; set; }
 
         [Required(ErrorMessage = "Il prezzo è obbligatorio")]

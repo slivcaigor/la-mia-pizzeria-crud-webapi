@@ -17,23 +17,22 @@
 <body>
     <header class="bg-white top-0 left-0 w-full shadow-sm">
         <nav class="flex items-center max-w-screen-xl mx-auto px-6 py-3">
-            <div class="flex flex-grow items-center justify-start space-x-6">
+            <div class="flex items-center justify-start space-x-6">
                 <a class="navbar-brand" asp-controller="Home" asp-action="Index">
-                    <img class="w-48 cursor-pointer" src="/img/Logo.png" alt="Logo">
+                    <img class="w-44 md:w-48 cursor-pointer" src="/img/Logo.png" alt="Logo">
                 </a>
 @*                <a class="nav-link text-lg text-dark" asp-controller="Pizza" asp-action="Index">Our pizza</a>
 *@            </div>
             <div class="flex flex-grow items-center justify-end space-x-6">
                 @if (User.IsInRole("Admin"))
                 {
-                    <a href="@Url.Action("Create", "Pizza")" class="btn rounded btn-primary py-1 px-2 mt-2 fs-6 mb-3">Add New Pizza</a>
+                    <a href="@Url.Action("Create", "Pizza")" class="btn rounded btn-primary py-1 px-2 mt-2 text-sm md:text-base mb-3">Add New Pizza</a>
                 }
-
                 <div class="dropdown dropdown-end">
                     @if (SignInManager.IsSignedIn(User))
                     {
                         <label tabindex="0" class="btn btn-ghost btn-circle avatar">
-                            <div class="w-12 rounded-full ">
+                            <div class="w-12 h-12 md:w-12 md:h-12 rounded-full">
                                 <img class="mask mask-hexagon-2" src="/img/avatar.png" />
                             </div>
                         </label>
@@ -43,6 +42,7 @@
             </div>
         </nav>
     </header>
+
 
 
     <main role="main">
