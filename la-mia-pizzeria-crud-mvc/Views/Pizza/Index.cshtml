@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Menu Page";
+    ViewData["Title"] = "Bringing a slice of happiness to your doorstep";
     @model List<Pizza>
 
     <!-- Pagination controls -->
@@ -28,7 +28,7 @@ else
                                 @card.Category.Name
                             }
                         </span>
-                        <img class="w-full rounded-full mx-auto transform transition duration-300 hover:scale-105" src="@card.Image?? '404.png'" alt="@card.Name">
+                        <img class="w-full rounded-full mx-auto transform transition duration-300 hover:scale-105" src="@card.Image?? '404.png'" alt="@card.Name" loading="lazy">
                         <div class="flex flex-col items-center my-3 space-y-2">
                             <h1 class="text-gray-900 poppins text-lg">@card.Name</h1>
                             <p class="text-gray-500 poppins text-sm text-center">@card.Description</p>
